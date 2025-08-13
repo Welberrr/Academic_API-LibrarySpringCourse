@@ -66,7 +66,22 @@ class LivroRepositoryTest {
         var livroParaAtualizar = repository.findById(id).orElse(null);
 
         UUID idAutor = UUID.fromString("teste");
-        Autor autor = autorRepository.findById(idAutor).orElse(null);
+        Autor maria = autorRepository.findById(idAutor).orElse(null);
 
+        livroParaAtualizar.setAutor(maria);
+
+        repository.save(livroParaAtualizar);
+    }
+
+    @Test
+    void deletar(){
+        UUID id = UUID.fromString("teste");
+        repository.deleteById(id);
+    }
+
+    @Test
+    void deletarCascade(){
+        UUID id = UUID.fromString("teste");
+        repository.deleteById(id);
     }
 }
