@@ -36,4 +36,26 @@ class LivroRepositoryTest {
 
         repository.save(livro);
     }
+
+    @Test
+    void salvarCascadeTest(){
+        Livro livro = new Livro();
+
+        livro.setIsbn("12345");
+        livro.setPreco(BigDecimal.valueOf(100));
+        livro.setGenero(GeneroLivro.FICCAO);
+        livro.setTitulo("UFO");
+        livro.setDataPublicacao(LocalDate.of(1980, 1, 2));
+
+        Autor autor = new Autor();
+        autor.setNome("Joao");
+        autor.setNacionalidade("Brasileiro");
+        autor.setDataNascimento(LocalDate.of(2004, 9, 25));
+
+        //Autor autor = autorRepository.findById(UUID.fromString(";aslkdjf;aslkjf")).orElse(null);
+
+        livro.setAutor(autor);
+
+        repository.save(livro);
+    }
 }
