@@ -4,6 +4,7 @@ import io.github.welberrr.libraryapi.model.Autor;
 import io.github.welberrr.libraryapi.model.GeneroLivro;
 import io.github.welberrr.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -57,5 +58,15 @@ class LivroRepositoryTest {
         livro.setAutor(autor);
 
         repository.save(livro);
+    }
+
+    @Test
+    void atualizarAutorDolivro(){
+        UUID id = UUID.fromString("teste");
+        var livroParaAtualizar = repository.findById(id).orElse(null);
+
+        UUID idAutor = UUID.fromString("teste");
+        Autor autor = autorRepository.findById(idAutor).orElse(null);
+
     }
 }
