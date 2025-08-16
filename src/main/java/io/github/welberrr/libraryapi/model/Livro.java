@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "livro")
 @Data
+@ToString(exclude = "autor")
 public class Livro {
 
     @Id
