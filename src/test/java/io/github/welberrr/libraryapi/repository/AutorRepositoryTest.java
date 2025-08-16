@@ -1,10 +1,15 @@
 package io.github.welberrr.libraryapi.repository;
 
 import io.github.welberrr.libraryapi.model.Autor;
+import io.github.welberrr.libraryapi.model.GeneroLivro;
+import io.github.welberrr.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +19,9 @@ public class AutorRepositoryTest {
 
     @Autowired
     AutorRepository repository;
+
+    @Autowired
+    LivroRepository livroRepository;
 
     @Test
     public void salvarTest(){
@@ -64,5 +72,28 @@ public class AutorRepositoryTest {
         var id = UUID.fromString("1");
         var maria = repository.findById(id).get();
         repository.delete(maria);
+    }
+
+    @Test
+    void salvarAutorComLivrosTest(){
+        Autor autor = new Autor();
+        autor.setNome("Maria");
+        autor.setNacionalidade("Brasileiro");
+        autor.setDataNascimento(LocalDate.of(2004, 9, 25));
+
+        Livro livro = new Livro();
+        livro.setIsbn("12345");
+        livro.setPreco(BigDecimal.valueOf(100));
+        livro.setGenero(GeneroLivro.FICCAO);
+        livro.setTitulo("UFO");
+        livro.setDataPublicacao(LocalDate.of(1980, 1, 2));
+        livro.setAutor(autor);
+
+        autor.setLivros(new ArrayList<>());
+        autor.getLivros().add(livro);
+
+        repository.save(autor);
+
+        livroRepository.saveAll(autor.getLivros());
     }
 }
