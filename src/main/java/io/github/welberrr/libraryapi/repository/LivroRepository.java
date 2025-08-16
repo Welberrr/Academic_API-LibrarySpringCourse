@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     List<Livro> findByAuto(Autor autor);
+    List<Livro> findByTitulo(String titulo);
+    List<Livro> findByISBN(String titulo);
 }
