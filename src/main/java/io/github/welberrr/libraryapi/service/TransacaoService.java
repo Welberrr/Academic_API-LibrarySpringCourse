@@ -22,6 +22,18 @@ public class TransacaoService {
     private LivroRepository livroRepository;
 
     @Transactional
+    public void salvarLivroComFoto(){
+        
+    }
+
+    @Transactional
+    public void atualizacaoSemAtualizar(){
+        var livro = livroRepository.findById(UUID.fromString("a;sdlkfja;lskf")).orElse(null);
+
+        livro.setDataPublicacao(LocalDate.of(2025, 06, 02));
+    }
+
+    @Transactional
     public void executar(){
 
             Livro livro = new Livro();
