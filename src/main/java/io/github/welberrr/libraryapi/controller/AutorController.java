@@ -1,6 +1,7 @@
 package io.github.welberrr.libraryapi.controller;
 
 import io.github.welberrr.libraryapi.controller.dto.AutorDTO;
+import io.github.welberrr.libraryapi.controller.dto.ErroResposta;
 import io.github.welberrr.libraryapi.model.Autor;
 import io.github.welberrr.libraryapi.service.AutorService;
 import org.springframework.http.HttpStatus;
