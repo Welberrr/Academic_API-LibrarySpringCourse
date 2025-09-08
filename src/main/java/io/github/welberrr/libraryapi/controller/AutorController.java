@@ -2,6 +2,7 @@ package io.github.welberrr.libraryapi.controller;
 
 import io.github.welberrr.libraryapi.controller.dto.AutorDTO;
 import io.github.welberrr.libraryapi.controller.dto.ErroResposta;
+import io.github.welberrr.libraryapi.exceptions.OperacaoNaoPermitidaEception;
 import io.github.welberrr.libraryapi.exceptions.RegistroDuplicadoException;
 import io.github.welberrr.libraryapi.model.Autor;
 import io.github.welberrr.libraryapi.service.AutorService;
@@ -56,7 +57,8 @@ public class AutorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletar(@PathVariable("id") String id){
+    public ResponseEntity<Object> deletar(@PathVariable("id") String id){
+        try{
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
 
@@ -66,6 +68,10 @@ public class AutorController {
 
         service.deletar(autorOptional.get());
         return ResponseEntity.noContent().build();
+    } catch (OperacaoNaoPermitidaEception e) {
+            var erroResposta = ErroResposta.respostaPadrao(e.getMessage());
+            return ResponseEntity.status(erroResposta.status()).body(erroResposta);
+        }
     }
 
     @GetMapping
@@ -84,24 +90,29 @@ public class AutorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> atualizar(
+    public ResponseEntity<Object> atualizar(
             @PathVariable("id") String id, @RequestBody AutorDTO dto){
-        ResponseEntity<Void> result;
 
-        var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = service.obterPorId(idAutor);
+        try {
 
-        if(autorOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = service.obterPorId(idAutor);
+
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            var autor = autorOptional.get();
+            autor.setNome(dto.nome());
+            autor.setNacionalidade(dto.nacionalidade());
+            autor.setDataNascimento(dto.dataNascimento());
+
+            service.salvar(autor);
+
+            return ResponseEntity.noContent().build();
+        } catch (RegistroDuplicadoException e){
+            var erroDto = ErroResposta.conflito(e.getLocalizedMessage());
+            return ResponseEntity.status(erroDto.status()).body(erroDto);
         }
-
-        var autor = autorOptional.get();
-        autor.setNome(dto.nome());
-        autor.setNacionalidade(dto.nacionalidade());
-        autor.setDataNascimento(dto.dataNascimento());
-
-        service.salvar(autor);
-
-        return ResponseEntity.noContent().build();
     }
 }

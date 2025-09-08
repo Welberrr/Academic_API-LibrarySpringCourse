@@ -1,7 +1,9 @@
 package io.github.welberrr.libraryapi.service;
 
+import io.github.welberrr.libraryapi.exceptions.OperacaoNaoPermitidaEception;
 import io.github.welberrr.libraryapi.model.Autor;
 import io.github.welberrr.libraryapi.repository.AutorRepository;
+import io.github.welberrr.libraryapi.repository.LivroRepository;
 import io.github.welberrr.libraryapi.validator.AutorValidator;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ public class AutorService {
 
     private final AutorRepository repository;
     private final AutorValidator validator;
+    private final LivroRepository livroRepository;
 
-    public AutorService(AutorRepository repository, AutorValidator validator){
+    public AutorService(AutorRepository repository, AutorValidator validator, LivroRepository livroRepository){
         this.repository = repository;
         this.validator = validator;
+        this.livroRepository = livroRepository;
     }
 
     public Autor salvar(Autor autor){
@@ -38,8 +42,12 @@ public class AutorService {
     }
 
     public void deletar(Autor autor){
+        if(possuiLivro(autor)){
+            throw new OperacaoNaoPermitidaEception("Nao eh permitido excluir um autor que tenha livros cadastrados!");
+        }
         repository.delete(autor);
     }
+
 
     public List<Autor> pesquisa(String nome, String nacionalidade){
         if(nome != null && nacionalidade != null){
@@ -55,5 +63,9 @@ public class AutorService {
         }
 
         return repository.findAll();
+    }
+
+    public boolean possuiLivro(Autor autor){
+        return livroRepository.existsByAutor(autor);
     }
 }
