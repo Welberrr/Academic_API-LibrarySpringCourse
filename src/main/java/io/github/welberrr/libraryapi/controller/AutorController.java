@@ -2,6 +2,7 @@ package io.github.welberrr.libraryapi.controller;
 
 import io.github.welberrr.libraryapi.controller.dto.AutorDTO;
 import io.github.welberrr.libraryapi.controller.dto.ErroResposta;
+import io.github.welberrr.libraryapi.exceptions.RegistroDuplicadoException;
 import io.github.welberrr.libraryapi.model.Autor;
 import io.github.welberrr.libraryapi.service.AutorService;
 import org.springframework.http.HttpStatus;
@@ -27,13 +28,18 @@ public class AutorController {
     }
 
     @PostMapping
-    public ResponseEntity <Void> salvar(@RequestBody AutorDTO autor){
-        Autor autorEntidade = autor.mapearParaAutor();
-        service.salvar(autorEntidade);
+    public ResponseEntity <Object> salvar(@RequestBody AutorDTO autor) {
+        try {
+            Autor autorEntidade = autor.mapearParaAutor();
+            service.salvar(autorEntidade);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(autorEntidade.getId()).toUri();
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(autorEntidade.getId()).toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+        } catch (RegistroDuplicadoException e) {
+            var erroDto = ErroResposta.conflito(e.getLocalizedMessage());
+            return ResponseEntity.status(erroDto.status()).body(erroDto);
+        }
     }
 
     @GetMapping("{id}")
