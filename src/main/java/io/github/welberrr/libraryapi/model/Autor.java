@@ -47,8 +47,6 @@ public class Autor {
 
 
 
-
-
     public UUID getId() {
         return id;
     }
